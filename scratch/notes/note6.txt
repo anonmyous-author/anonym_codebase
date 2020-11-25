@@ -1,0 +1,78 @@
+Why JO can be batched
+
+x_1 : x1 x2 x3 x4 x5
+x_2 : x1 x2 x3 x4 x5 x6 x7
+x_3 : x1 x2 x3
+
+batching will ensure each x_i's lengths are same
+x_1 : x1 x2 x3 x4 x5
+x_2 : x1 x2 x3 x4 x5  ... x250
+x_3 : x1 x2 x3 x4 x5
+
+
+Fine.
+
+Now considering the number of sites, and the site vector z.
+
+z_1: 1   0    # sites = 2 < 5
+    foo; y
+z_2: 1 0 1  # sites = 3 < 5
+z_3: 1      # sites = 1 < 5
+
+x_1: foo y X X foo
+
+z lengths are different for samples within a batch. Problem? No.
+z is eventually multiplied by a site-map vector (variable `embed`, in the implementation) to produce a final vector of length equal to input size.
+site_map_1: {
+    foo: 1 0 0 0 1
+    y:   0 1 0 0 0
+}
+
+1 * 1 0 0 0 1 <--- 250
+0 * 0 1 0 0 0
+s   1 0 0 0 1
+
+# of optimizee vars per program:
+z: 5 * 3 = 15
+u: |V| * 5 < -- |V| = ~15K*2 = O(300K); 
+
+site_map_2: {
+    1: 1 0 0 0 1
+    2: 0 0 1 0 0
+    3: 0 1 0 0 0
+}
+site_map_3: {
+    1: 1 0 0 0 1
+}
+
+z = z * site_map:
+
+z_1 : 1 1 0 0 1
+z_2 : 1 1 1 0 1
+z_3 : 1 0 0 0 1
+
+Perturbed = z . u + (1-z) . p
+This can be batchified now.
+====================================================
+
+Handling large batches -- uwisc strategy 
+
+if len(p) > 250:
+    pick 1 site randomly
+    replace u randomly
+else:
+    pick 1 site randomly
+    optimally replace that site
+====================================================
+
+Compare params
+
+image net: 
+batch_sz = 90 images
+img dim = 150K
+model - resnet 50: # of params: 
+
+programs:
+batch sz = 16
+pgm dim = 
+=====================================================

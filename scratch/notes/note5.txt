@@ -1,0 +1,128 @@
+z: 0 0 0 1 -- [u4]
+z1: 0 0 1 0 -- [u3]
+z2: 0 1 0 0 -- [u2]
+
+x1 x2 x3 u4
+x1 x2 u3 u4
+x1 u2 u3 u4
+
+x1 u2 x3 x4
+x1 x2 u3 x4
+x1 x2 x3 u4
+
+
+
+z4: 0 1 0 0
+z5: 0 1 0 0
+z6: 0 1 0 0
+
+Program: 
+
+input: R1 x2 x3 R1 x5 R2
+orig: x1 x2 x3 x1 x5 x6
+
+z: [0, 1] [x1, x6]
+
+
+input: R1 x2 x3 R1 x5 R2
+after u-step: R1 x2 x3 R1 x5 R2
+but should have been: x1 x2 x3 x1 x5 u2
+====================================================
+Current version -- buggy UWisc
+R1 x2 x3 R1 x5 R2
+R1 x2 x3 R1 x5 ?
+
+R2: 000000 1 000000
+    asdasdas 1.23 asdasdsad
+    adsasdasd 1 asdasdasd
+
+best-replace-tokens{x6, }
+
+====================================================
+Revised - 
+
+x1 x2 x3 x1 x5 x6
+x1 x2 x3 x1 x5 ?
+
+x6: 000000000 1 000
+    asdasdas 1.35 dsad
+    adsasdasd 1 aasd
+
+best-replace-tokens{x6, }
+1- iterative pgd -- see if it matters; If (3) holds, then 1 iter may not suffice. FGSM may still perform decently.
+other options -- try all zeros.
+2- LR: positive and grad is positive --  makes a difference
+3- initial point matters. uniform distribution of 1/N, N is number of **valid** replacement tokens; invalid tokens are 0.
+4- second projection -- to ensure that the projection is happening on only the **valid** replacement tokens. The other tokens are 0.
+5- pick the best z out of the N choices.
+====================================================
+
+
+
+
+
+
+
+
+
+
+
+
+site_map{
+    1: T, F, F, T, F, F (x2, x4)
+    2: F, F, F, F, F, T (x6)
+}
+
+assert not any(site_map[i]) 
+
+iter1:
+issue 1: intial cond of z doesnt make a difference
+x = foo(orig)
+loss(model(x)) <-- original seq in iter1
+u step: 
+x1 = x1 x2 x3 x5 x5 u1 u2
+===
+
+x2 = foo(x1)
+site_map:
+site_map{
+    1: T, F, F, T, F, F, F (x2, x4)
+    2: F, F, F, F, F, T, T (x6)
+}
+z = [1, 0]
+====
+x3 = foo(x2)
+
+""assert x2 == x3 // check 1""
+
+site_map:
+site_map{
+    1: T, F, F, T, F, F, F (x2, x4)
+    2: F, F, F, F, F, T, T (x6)
+}
+z = [1, 0]
+
+best_replacements_sample{
+    @R1: asd,
+    @R2: asdasdasd
+}
+
+best_replacements_sample{
+    x2: asd,
+    x6: asdasdasd
+}
+
+Check 1
+0 0 0 1 0
+z_optim = False
+z_init = 1
+use_orig_token = True, False ;
+32; 25
+
+check 2
+analyze_exact_match_sample = True
+samples_to_analyze = 1
+best_replacements_sample for both cases use_orig_token = True, False;
+
+check 3
+"assert x2 == x3"

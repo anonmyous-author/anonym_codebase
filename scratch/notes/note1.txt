@@ -1,0 +1,17 @@
+def x:
+    R1 = 5
+    print(XX)
+    b = 3
+    print(XX)
+    x = x+R1+b
+    print(XX)
+
+
+
+map 1:
+a -> R1
+"" -> print(R2)
+
+map 2:
+u --> [R1, R2]
+z --> [1, 0]

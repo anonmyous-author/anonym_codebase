@@ -1,0 +1,55 @@
+
+AVERLOC SETUP
+======================
+x = x_z-one
+(should have been x =  orig-input (without @Rs))
+all possible transformed sites have these @Rs == z: one random site
+
+loss(model(x)) == loss(model(x_orig))
+u-step
+replaced-tokens
+
+CURRENT SETUP
+======================
+
+x = replaced-input  (contains @Rs)
+all possible transformed sites have these @Rs == z: all sites
+
+trying to find the best z --> all-sites-default => 1^T.z <= epsilon
+
+z: 1 1 1 1 1 1 (all tokens have been replaced with @R)
+z: 0 1 0 0 1 0 (sum(z) == 2)
+
+loss(model(x_zall)) > loss(model(x_orig))
+
+for iters
+    u step
+    z step
+replaced-tokens
+
+x_orig: def foo x = y + z
+x_z-all: def foo @R1 = @R2 + @R3
+x_z-one: def foo x = @R1 + z
+x_z-i: def foo @R1  = y + z, assuming i = 1
+
+CORRECT SETUP - 1
+=========================
+x = replaced-input  (contains @Rs)
+all possible transformed sites have these @Rs == z: all sites
+loss(model(x_orig))
+based on z, you replace x_orig[site] with tamara function
+
+CORRECT SETUP - 2
+========================
+./experiment/adv_attack 
+x = replaced-input  (contains @Rs)
+all possible transformed sites have these @Rs == z: all sites
+for iters
+    u step -- loss(model(x'))
+    z step -- loss(model(x')), where x' = x_z-all # tamara_func(x_orig, z)
+replaced-tokens
+find best replacements
+before writing to file, call get_all_replacements and replace any @R tokens that weren't optimized with their origs.
+
+sudo ./experiment/test_xxxx
+original tokens + optimized tokens

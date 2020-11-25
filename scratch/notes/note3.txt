@@ -1,0 +1,18 @@
+x = x1 x2 x3 x4 x5; z_init: 0 0 0 0 1
+
+1: x1 x2 x3 x4 u5 z: 0 0 0 0 1; 
+2: x1 x2 x3 x4 u5 z: 0 0 1 0 0; 1 == 2
+3: x1 x2 u3 x4 u5 z: 0 0 1 0 0; is 3 >= 1
+4: x1 x2 u3 x4 u5 z: 1 0 0 0 0; 4 == 3
+5: u1 x2 u3 x4 u5 z: 1 0 0 0 0; 5 >= 3 => 5 >= 1
+6: u1 x2 u3 x4 u5 z: 0 0 1 0 0; 6 = 5; same as 2
+7: u1 x2 u3' x4 u5 z: 0 0 1 0 0; 7>=6 => 7>=2
+
+
+x = x1 x2 x3 x4 x5; z_init: 0 0 0 0 1
+
+1: x1 x2 x3 x4 u5 z: 0 0 0 0 1; 
+2: x1 x2 x3 x4 u5 z: 0 0 1 0 0;
+3: x1 x2 u3 x4 x5 z: 0 0 1 0 0; 3 >? 1
+4: x1 x2 u3 x4 x5 z: 1 0 0 0 0; <-- this has greedily been chosen already
+5: u1 x2 x3 x4 x5 z: 1 0 0 0 0; 5 >? 3 -- stop

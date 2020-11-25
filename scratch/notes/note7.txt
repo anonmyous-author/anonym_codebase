@@ -1,0 +1,25 @@
+Multiple levels of obfuscation.
+==================================
+
+Applies primarily when insert transforms are involved.
+Inserting a new line results in a new program P_1 altogether, which can again be optimized as if it were P.
+
+def foo:
+    x1. print x
+    p = a.stmnt + b
+    y1. print y
+sites: 
+L1, p , a, stmnt, b, L2
+def foo1:
+    x1. L1
+    f1 = f2.f3 + f4
+    x2 . L2
+    print f5
+    x3 . L3
+def foo':
+    P1
+    f1 = f2.f3 + f4
+    P2
+    print(f5)
+    P3
+1 instance -> per site
